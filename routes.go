@@ -7,5 +7,7 @@ func initialiseRoutes(s *server) *gin.Engine {
 
 	r.GET("/ping", handlePing)
 
+	r.POST("/v2/email/outbound-emails", s.handleSendEmail)
+
 	return r
 }
