@@ -17,6 +17,9 @@ type SendEmailInput struct {
 	ConfigurationSetName                      string                 `json:"ConfigurationSetName,omitempty"`
 	ListManagementOptions                     *ListManagementOptions `json:"ListManagementOptions,omitempty"`
 	EndpointId                                string                 `json:"EndpointId,omitempty"`
+
+	// Response is triggered based no this field
+	Scenario string
 }
 
 // ListManagementOptions contains options for list management
@@ -93,12 +96,10 @@ type MessageTag struct {
 
 type SendEmailResponse struct {
 	MessageId string `json:"MessageId"`
-	RequestId string `json:"RequestId"`
 }
 
 type ErrorResponse struct {
-    Message   string `json:"Message"`
-    Code      string `json:"Code"`
-    Type      string `json:"Type"`
-    RequestId string `json:"RequestId"`
+	Message   string `json:"Message"`
+	Code      string `json:"Code"`
+	RequestId string `json:"RequestId"`
 }

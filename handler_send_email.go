@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 
+	"github.com/arunvm123/demtech/constants"
 	"github.com/arunvm123/demtech/email"
 	"github.com/gin-gonic/gin"
 )
@@ -105,13 +106,21 @@ func (server *server) handleSendEmail(c *gin.Context) {
 
 	emailInput := mapToSendEmailInput(&args)
 
+	scenario := c.GetHeader("Scenario")
+
+	if len(scenario) == 0 {
+		scenario = constants.MockScenarioSuccess
+	}
+
+	emailInput.Scenario = scenario
+
 	response, err := server.email.SendEmail(*emailInput)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, err)
+		c.Status(http.StatusInternalServerError)
 		return
 	}
 
-	c.JSON(http.StatusOK, response)
+	c.JSON(getResponseStausCode(response), response)
 	return
 }
 
@@ -246,4 +255,29 @@ func mapEmailHeaders(headers []EmailHeader) []email.EmailHeader {
 		}
 	}
 	return result
+}
+
+var errorCodeToStatusCode = map[string]int{
+	constants.ErrCodeMessageRejected:           http.StatusBadRequest,
+	constants.ErrCodeValidationException:       http.StatusBadRequest,
+	constants.ErrCodeBadRequestException:       http.StatusBadRequest,
+	constants.ErrCodeMailFromDomainNotVerified: http.StatusBadRequest,
+	constants.ErrCodeAccountSuspended:          http.StatusForbidden,
+	constants.ErrCodeTooManyRequests:           http.StatusTooManyRequests,
+	constants.ErrCodeLimitExceeded:             http.StatusBadRequest,
+	constants.ErrCodeInternalServer:            http.StatusInternalServerError,
+}
+
+func getResponseStausCode(response interface{}) int {
+
+	var statusCode int
+
+	switch r := response.(type) {
+	case email.SendEmailResponse:
+		return http.StatusOK
+	case email.ErrorResponse:
+		return errorCodeToStatusCode[r.Message]
+	}
+
+	return statusCode
 }
