@@ -387,7 +387,7 @@ var SwaggerInfo = &swag.Spec{
 	BasePath:         "/",
 	Schemes:          []string{},
 	Title:            "Demtech Mock SES",
-	Description:      "APIs available ofr fairsplits.",
+	Description:      "APIs available for demtech.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 }

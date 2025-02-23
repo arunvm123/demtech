@@ -1,7 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "APIs available ofr fairsplits.",
+        "description": "APIs available for demtech.",
         "title": "Demtech Mock SES",
         "termsOfService": "http://swagger.io/terms/",
         "contact": {

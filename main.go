@@ -26,7 +26,7 @@ func newServer() *server {
 
 // @title           Demtech Mock SES
 // @version         1.0
-// @description     APIs available ofr fairsplits.
+// @description     APIs available for demtech.
 // @termsOfService  http://swagger.io/terms/
 
 // @contact.name   API Support

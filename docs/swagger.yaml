@@ -162,7 +162,7 @@ info:
     email: support@swagger.io
     name: API Support
     url: http://www.swagger.io/support
-  description: APIs available ofr fairsplits.
+  description: APIs available for demtech.
   termsOfService: http://swagger.io/terms/
   title: Demtech Mock SES
   version: "1.0"
