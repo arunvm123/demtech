@@ -1,9 +1,11 @@
 package postgres
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/arunvm123/demtech/model"
+	"gorm.io/gorm"
 )
 
 type APILog struct {
@@ -33,4 +35,26 @@ func (postgres *Postgres) CreateAPILog(args model.CreateAPILogArgs) error {
 	}
 
 	return nil
+}
+
+func (postgres *Postgres) GetAggregatedLogs(args model.GetAggregatedLogsArgs) ([]model.AggregatedLog, error) {
+	var query *gorm.DB
+
+	if args.UserName != nil {
+		query = postgres.Client.Table("api_logs").
+			Select("user_name, scenario, count(*) as count").
+			Where("user_name = ?", *args.UserName).
+			Group("user_name, scenario")
+	} else {
+		query = postgres.Client.Table("api_logs").
+			Select("'' as user_name, scenario, count(*) as count").
+			Group("scenario")
+	}
+
+	var results []model.AggregatedLog
+	if err := query.Find(&results).Error; err != nil {
+		return nil, fmt.Errorf("failed to get aggregated logs: %v", err)
+	}
+
+	return results, nil
 }

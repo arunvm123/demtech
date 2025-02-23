@@ -18,3 +18,13 @@ type CreateAPILogArgs struct {
 	Scenario    string
 	ToAddress   string
 }
+
+type GetAggregatedLogsArgs struct {
+	UserName *string
+}
+
+type AggregatedLog struct {
+	UserName string
+	Scenario string
+	Count    int
+}
