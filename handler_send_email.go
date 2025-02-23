@@ -1,11 +1,15 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/arunvm123/demtech/constants"
 	"github.com/arunvm123/demtech/email"
+	"github.com/arunvm123/demtech/model"
 	"github.com/gin-gonic/gin"
+	"github.com/google/uuid"
 )
 
 type handleSendEmailArgs struct {
@@ -119,6 +123,11 @@ func (server *server) handleSendEmail(c *gin.Context) {
 		c.Status(http.StatusInternalServerError)
 		return
 	}
+
+	dbArgs := extractAPILogArgs(args)
+	dbArgs.UserName = c.Keys["user_name"].(string)
+	dbArgs.Scenario = scenario
+	server.db.CreateAPILog(dbArgs)
 
 	c.JSON(getResponseStausCode(response), response)
 	return
@@ -280,4 +289,45 @@ func getResponseStausCode(response interface{}) int {
 	}
 
 	return statusCode
+}
+
+func extractAPILogArgs(args handleSendEmailArgs) model.CreateAPILogArgs {
+
+	fromAddress := args.FromEmailAddress
+
+	var toAddresses []string
+	if args.Destination != nil {
+		toAddresses = args.Destination.ToAddresses
+	}
+
+	toAddressesStr := strings.Join(toAddresses, ", ")
+
+	// Extract content based on priority: Raw > Simple > Template
+	var content string
+	if args.Content != nil {
+		if args.Content.Raw != nil {
+			content = fmt.Sprintf("Raw email data length: %d bytes", len(args.Content.Raw.Data))
+		} else if args.Content.Simple != nil {
+			// For simple email, combine subject and body
+			subject := args.Content.Simple.Subject.Data
+			var body string
+			if args.Content.Simple.Body.Html != nil {
+				body = args.Content.Simple.Body.Html.Data
+			} else if args.Content.Simple.Body.Text != nil {
+				body = args.Content.Simple.Body.Text.Data
+			}
+			content = fmt.Sprintf("Subject: %s\nBody: %s", subject, body)
+		} else if args.Content.Template != nil {
+			content = fmt.Sprintf("Template: %s, Data: %s",
+				args.Content.Template.TemplateName,
+				args.Content.Template.TemplateData)
+		}
+	}
+
+	return model.CreateAPILogArgs{
+		ID:          uuid.New().String(),
+		Content:     content,
+		FromAddress: fromAddress,
+		ToAddress:   toAddressesStr,
+	}
 }

@@ -51,6 +51,8 @@ func main() {
 		log.Fatalf("Failed to connect to database\n%v", err)
 	}
 
+	pg.MigrateDB()
+
 	s.db = pg
 
 	log.Fatal(http.ListenAndServe(":"+config.Port, s.routes))
