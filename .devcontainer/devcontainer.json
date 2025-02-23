@@ -1,8 +1,17 @@
 {
-    "name": "demtech",
+    "name": "Go & PostgreSQL",
     "dockerComposeFile": "docker-compose.yml",
     "service": "app",
     "workspaceFolder": "/workspace",
+    
+    "features": {
+        "ghcr.io/devcontainers/features/go:1": {
+            "version": "1.23"
+        },
+        "ghcr.io/devcontainers/features/docker-in-docker:2": {},
+        "ghcr.io/devcontainers/features/git:1": {}
+    },
+    
     "customizations": {
         "vscode": {
             "extensions": [
@@ -16,11 +25,8 @@
             }
         }
     },
-    "features": {
-        "ghcr.io/devcontainers/features/go:1": {
-            "version": "latest"
-        }
-    },
-    "forwardPorts": [5432],
-    "postCreateCommand": "go mod download"
+    
+    "remoteUser": "vscode",
+    
+    "postCreateCommand": "go install -v golang.org/x/tools/gopls@latest"
 }
