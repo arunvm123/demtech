@@ -50,3 +50,9 @@ and to run it
 To quickly set up and run the service and database without manual configuration, you can use Docker Compose:
 
     docker compose --env-file config-env up
+
+## How to add swagger docs for APIs?
+
+Install swag cli following steps mentioned [here](https://github.com/swaggo/swag?tab=readme-ov-file#getting-started)
+When adding a new API, add the required annotations above the handler. Once the annotations have been added, update the docs by running the command *swag init*
+Once the docs have been generated, to view the swagger docs, run the server and go to ```/swagger/index.html``` to go through available APIs.

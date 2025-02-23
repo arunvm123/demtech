@@ -1,0 +1,247 @@
+basePath: /
+definitions:
+  email.ErrorResponse:
+    properties:
+      Code:
+        type: string
+      Message:
+        type: string
+      RequestId:
+        type: string
+    type: object
+  email.SendEmailResponse:
+    properties:
+      MessageId:
+        type: string
+    type: object
+  main.Body:
+    properties:
+      Html:
+        $ref: '#/definitions/main.Content'
+      Text:
+        $ref: '#/definitions/main.Content'
+    type: object
+  main.Content:
+    properties:
+      Charset:
+        type: string
+      Data:
+        type: string
+    type: object
+  main.Destination:
+    properties:
+      BccAddresses:
+        items:
+          type: string
+        type: array
+      CcAddresses:
+        items:
+          type: string
+        type: array
+      ToAddresses:
+        items:
+          type: string
+        type: array
+    type: object
+  main.EmailContent:
+    properties:
+      Raw:
+        $ref: '#/definitions/main.RawMessageContent'
+      Simple:
+        $ref: '#/definitions/main.SimpleEmailContent'
+      Template:
+        $ref: '#/definitions/main.TemplateEmailContent'
+    type: object
+  main.EmailHeader:
+    properties:
+      Name:
+        type: string
+      Value:
+        type: string
+    type: object
+  main.ListManagementOptions:
+    properties:
+      ContactListName:
+        type: string
+      TopicName:
+        type: string
+    type: object
+  main.MessageTag:
+    properties:
+      Name:
+        type: string
+      Value:
+        type: string
+    type: object
+  main.RawMessageContent:
+    properties:
+      Data:
+        items:
+          type: integer
+        type: array
+    type: object
+  main.SimpleEmailContent:
+    properties:
+      Body:
+        $ref: '#/definitions/main.Body'
+      Headers:
+        items:
+          $ref: '#/definitions/main.EmailHeader'
+        type: array
+      Subject:
+        $ref: '#/definitions/main.Content'
+    type: object
+  main.TemplateContent:
+    properties:
+      Html:
+        type: string
+      Subject:
+        type: string
+      Text:
+        type: string
+    type: object
+  main.TemplateEmailContent:
+    properties:
+      Headers:
+        items:
+          $ref: '#/definitions/main.EmailHeader'
+        type: array
+      TemplateArn:
+        type: string
+      TemplateContent:
+        $ref: '#/definitions/main.TemplateContent'
+      TemplateData:
+        type: string
+      TemplateName:
+        type: string
+    type: object
+  main.handleSendEmailArgs:
+    properties:
+      ConfigurationSetName:
+        type: string
+      Content:
+        $ref: '#/definitions/main.EmailContent'
+      Destination:
+        $ref: '#/definitions/main.Destination'
+      EmailTags:
+        items:
+          $ref: '#/definitions/main.MessageTag'
+        type: array
+      EndpointId:
+        type: string
+      FeedbackForwardingEmailAddress:
+        type: string
+      FeedbackForwardingEmailAddressIdentityArn:
+        type: string
+      FromEmailAddress:
+        type: string
+      FromEmailAddressIdentityArn:
+        type: string
+      ListManagementOptions:
+        $ref: '#/definitions/main.ListManagementOptions'
+      ReplyToAddresses:
+        items:
+          type: string
+        type: array
+    type: object
+  main.handlerGetLogsAggregatesResponse:
+    properties:
+      Count:
+        type: integer
+      Scenario:
+        type: string
+      UserName:
+        type: string
+    type: object
+externalDocs:
+  description: OpenAPI
+  url: https://swagger.io/resources/open-api/
+host: localhost:9090
+info:
+  contact:
+    email: support@swagger.io
+    name: API Support
+    url: http://www.swagger.io/support
+  description: APIs available for demtech.
+  termsOfService: http://swagger.io/terms/
+  title: Demtech Mock SES
+  version: "1.0"
+paths:
+  /logs:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves aggregated logs with optional filtering by username
+      parameters:
+      - description: Filter logs by username
+        in: query
+        name: username
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/main.handlerGetLogsAggregatesResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get aggregated logs
+  /ping:
+    get:
+      description: Health check endpoint that returns "pong"
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: pong
+          schema:
+            type: string
+      summary: Ping endpoint
+  /v2/email/outbound-emails:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Mock scenario to simulate (success, unverified_email, account_suspended,
+          rate_exceeded, missing_from, domain_not_verified, daily_quota_exceeded)
+        in: header
+        name: Scenario
+        type: string
+      - description: Accepts the same parameters as SES send email v2
+        in: body
+        name: handleSendEmailArgs
+        required: true
+        schema:
+          $ref: '#/definitions/main.handleSendEmailArgs'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/email.SendEmailResponse'
+        "400":
+          description: Message rejected, validation error, bad request, or unverified
+            domain (MessageRejected, ValidationException, BadRequestException, MailFromDomainNotVerifiedException)
+          schema:
+            $ref: '#/definitions/email.ErrorResponse'
+        "403":
+          description: Account suspended (AccountSuspendedException)
+          schema:
+            $ref: '#/definitions/email.ErrorResponse'
+        "429":
+          description: Too many requests (TooManyRequestsException)
+          schema:
+            $ref: '#/definitions/email.ErrorResponse'
+        "500":
+          description: Internal server error (InternalServerError)
+          schema:
+            $ref: '#/definitions/email.ErrorResponse'
+      summary: The Mock API accepts SES parameters in request body and triggers response
+        based on the Scenario header
+swagger: "2.0"

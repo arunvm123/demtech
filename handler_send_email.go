@@ -98,6 +98,19 @@ type MessageTag struct {
 	Value string `json:"Value"`
 }
 
+// Mock API for https://docs.aws.amazon.com/ses/latest/APIReference-V2/API_SendEmail.html
+// @Summary The Mock API accepts SES parameters in request body and triggers response based on the Scenario header
+// @Description
+// @Accept       json
+// @Produce     json
+// @Param       Scenario header string false "Mock scenario to simulate (success, unverified_email, account_suspended, rate_exceeded, missing_from, domain_not_verified, daily_quota_exceeded)"
+// @Param		handleSendEmailArgs body main.handleSendEmailArgs  true "Accepts the same parameters as SES send email v2"
+// @Success 200 {object}  email.SendEmailResponse
+// @Failure     400 {object} email.ErrorResponse "Message rejected, validation error, bad request, or unverified domain (MessageRejected, ValidationException, BadRequestException, MailFromDomainNotVerifiedException)"
+// @Failure     403 {object} email.ErrorResponse "Account suspended (AccountSuspendedException)"
+// @Failure     429 {object} email.ErrorResponse "Too many requests (TooManyRequestsException)"
+// @Failure     500 {object} email.ErrorResponse "Internal server error (InternalServerError)"
+// @Router       /v2/email/outbound-emails [post]
 func (server *server) handleSendEmail(c *gin.Context) {
 
 	var args handleSendEmailArgs
