@@ -24,6 +24,20 @@ func newServer() *server {
 	return &s
 }
 
+// @title           Demtech Mock SES
+// @version         1.0
+// @description     APIs available ofr fairsplits.
+// @termsOfService  http://swagger.io/terms/
+
+// @contact.name   API Support
+// @contact.url    http://www.swagger.io/support
+// @contact.email  support@swagger.io
+
+// @host      localhost:9090
+// @BasePath  /
+
+// @externalDocs.description  OpenAPI
+// @externalDocs.url          https://swagger.io/resources/open-api/
 func main() {
 	s := newServer()
 
