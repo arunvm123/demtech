@@ -20,6 +20,60 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/logs": {
+            "get": {
+                "description": "Retrieves aggregated logs with optional filtering by username",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Get aggregated logs",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Filter logs by username",
+                        "name": "username",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/main.handlerGetLogsAggregatesResponse"
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/ping": {
+            "get": {
+                "description": "Health check endpoint that returns \"pong\"",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Ping endpoint",
+                "responses": {
+                    "200": {
+                        "description": "pong",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
         "/v2/email/outbound-emails": {
             "post": {
                 "consumes": [
@@ -302,6 +356,20 @@ const docTemplate = `{
                     "items": {
                         "type": "string"
                     }
+                }
+            }
+        },
+        "main.handlerGetLogsAggregatesResponse": {
+            "type": "object",
+            "properties": {
+                "Count": {
+                    "type": "integer"
+                },
+                "Scenario": {
+                    "type": "string"
+                },
+                "UserName": {
+                    "type": "string"
                 }
             }
         }

@@ -144,6 +144,15 @@ definitions:
           type: string
         type: array
     type: object
+  main.handlerGetLogsAggregatesResponse:
+    properties:
+      Count:
+        type: integer
+      Scenario:
+        type: string
+      UserName:
+        type: string
+    type: object
 externalDocs:
   description: OpenAPI
   url: https://swagger.io/resources/open-api/
@@ -158,6 +167,41 @@ info:
   title: Demtech Mock SES
   version: "1.0"
 paths:
+  /logs:
+    get:
+      consumes:
+      - application/json
+      description: Retrieves aggregated logs with optional filtering by username
+      parameters:
+      - description: Filter logs by username
+        in: query
+        name: username
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/main.handlerGetLogsAggregatesResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            type: string
+      summary: Get aggregated logs
+  /ping:
+    get:
+      description: Health check endpoint that returns "pong"
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: pong
+          schema:
+            type: string
+      summary: Ping endpoint
   /v2/email/outbound-emails:
     post:
       consumes:

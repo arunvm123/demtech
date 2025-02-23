@@ -14,6 +14,14 @@ type handlerGetLogsAggregatesResponse struct {
 	Count    int    `json:"Count"`
 }
 
+// @Summary Get aggregated logs
+// @Description Retrieves aggregated logs with optional filtering by username
+// @Accept json
+// @Produce json
+// @Param username query string false "Filter logs by username"
+// @Success 200 {array} handlerGetLogsAggregatesResponse
+// @Failure 500 {string} string "Internal Server Error"
+// @Router /logs [get]
 func (server *server) handlerGetLogsAggregates(c *gin.Context) {
 
 	username := c.Query("username")
