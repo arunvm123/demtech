@@ -9,7 +9,7 @@ func initialiseRoutes(s *server) *gin.Engine {
 	private.Use(authMiddleware())
 
 	r.GET("/ping", handlePing)
-	r.GET("logs", s.handlerGetLogsAggregates)
+	r.GET("/logs", s.handlerGetLogsAggregates)
 
 	private.POST("/v2/email/outbound-emails", s.handleSendEmail)
 
