@@ -1,0 +1,46 @@
+name: "demtech"
+
+services:
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - db
+    env_file:
+      - path: config-env
+        required: true
+    ports: 
+      - "${PORT:-8080}:${PORT:-8080}"
+    networks:
+      - fs_network
+
+  db:
+    image: postgres:13.4-alpine
+    env_file:
+      - path: config-env
+        required: true
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    healthcheck:
+      test: "PGPASSWORD=${DB_PASSWORD} -h localhost -U bnd -c '\\l'"
+      interval: 3s
+      timeout: 3s
+      retries: 3
+    volumes:
+      - "db-data:/var/lib/postgresql/data"
+    networks:
+      - fs_network
+
+volumes:
+  db-data:
+
+networks:
+  # NOTE: Custom bridge network allows accessing containers by name (ie. as host)!
+  fs_network:
+    name: fs_network
+    driver: bridge
