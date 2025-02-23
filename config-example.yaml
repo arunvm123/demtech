@@ -1,0 +1,7 @@
+port: "<WEB_SERVER_PORT>"
+database:
+  host: "<HOST_NAME>"
+  user: "<USER_NAME>"
+  password: "<DATABASE_PASSWORD>"
+  database_name: "<DATABASE_NAME>"
+  port: "<DATABASE_PORT>"
